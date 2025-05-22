@@ -50,22 +50,43 @@ class CalculatorPage : AppCompatActivity() {
     }
 
     private fun getEqual() {
-        val text = viewTable.text.toString()
-        val regex = Regex("(\\d+)([+\\-*/])(\\d+)")
-        val result = regex.find(text)
 
-        if (result != null) {
-            val c = result.groupValues[2]
-            val a = result.groupValues[1].toInt()
-            val b = result.groupValues[3].toInt()
-            val output: Int = when (c) {
-                "+" -> a + b
-                "-" -> a - b
-                "*" -> a * b
-                "/" -> a / b
+        var operatorIndex = 0
+        var operator = ' '
+        val text = viewTable.text.toString()
+        //val regex = Regex("(\\d+)([+\\-*/])(\\d+)")
+        //val result = regex.find(text)
+        for (i in text.indices) {
+            if (text[i] == '+' || text[i] == '-' || text[i] == '*' || text[i] == '/') {
+                operatorIndex = i.toInt()
+                operator = text[i]
+                break
+            }
+        }
+        var a = ""
+        var b = ""
+
+        for (i in 0..operatorIndex-1){
+            a += text[i]
+        }
+        var first = a.toInt()
+
+        for (i in operatorIndex+1..text.length-1){
+            b += text[i]
+        }
+
+        var second = b.toInt()
+
+
+        if (operatorIndex != 0){
+            val output: Int = when (operator) {
+                '+' -> first + second
+                '-' -> first - second
+                '*' -> first * second
+                '/' -> first / second
                 else -> throw Error("error")
             }
-            viewTable.text = "$output"
+            viewTable.text = output.toString()
         }
     }
 }
