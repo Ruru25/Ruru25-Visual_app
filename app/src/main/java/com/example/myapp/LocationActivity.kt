@@ -51,6 +51,7 @@ class LocationActivity : AppCompatActivity() {
         tvTime = findViewById(R.id.textView2)
     }
 
+
     override fun onResume() {
         super.onResume()
 
@@ -60,6 +61,14 @@ class LocationActivity : AppCompatActivity() {
         }
 
         getCurrentLocation()
+    }
+
+    fun setCurentTime(ms: Long) : String{
+        val seconds = (ms / 1000) % 60
+        val minutes = (ms / 60000) % 60
+        val hours = (ms / 3600000) % 24
+        val timeNow = "${hours.toString()} ${minutes.toString()} ${seconds.toString()}"
+        return (timeNow)
     }
 
     private fun getCurrentLocation() {
@@ -85,10 +94,7 @@ class LocationActivity : AppCompatActivity() {
                         tvLat.text = "Широта: ${location.latitude}"
                         tvLon.text = "Долгота: ${location.longitude}"
                         tvAlt.text = "Высота: ${"%.2f".format(location.altitude)} метров"
-
-                        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                        val timeString = sdf.format(Date(location.time))
-                        tvTime.text = "Время: $timeString"
+                        tvTime.text = "Время: ${setCurentTime(location.time)}"
                     }
                 }
             } else {
