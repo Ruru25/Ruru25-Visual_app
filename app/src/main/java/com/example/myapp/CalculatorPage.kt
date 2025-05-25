@@ -50,43 +50,62 @@ class CalculatorPage : AppCompatActivity() {
     }
 
     private fun getEqual() {
-
-        var operatorIndex = 0
         var operator = ' '
-        val text = viewTable.text.toString()
-        //val regex = Regex("(\\d+)([+\\-*/])(\\d+)")
-        //val result = regex.find(text)
-        for (i in text.indices) {
-            if (text[i] == '+' || text[i] == '-' || text[i] == '*' || text[i] == '/') {
-                operatorIndex = i.toInt()
-                operator = text[i]
-                break
-            }
-        }
         var a = ""
         var b = ""
+        val text = viewTable.text.toString()
+        var foundOperator = false
 
-        for (i in 0..operatorIndex-1){
-            a += text[i]
+        for (i in text.indices) {
+            if (text[i] == '+' || text[i] == '-' || text[i] == '*' || text[i] == '/') {
+                operator = text[i]
+                foundOperator = true
+                continue
+            }
+
+
+            if (!foundOperator) {
+                try {
+                    a += text[i]
+                }catch (e: NumberFormatException){
+                    viewTable.text = "Неверный формат"
+                }
+            } else {
+                b += text[i]
+            }
         }
-        var first = a.toInt()
 
-        for (i in operatorIndex+1..text.length-1){
-            b += text[i]
+        if (!foundOperator) {
+            viewTable.text = "Нет оператора"
+            return
+        }
+        if (b == "") {
+            viewTable.text = "Нет вторго числа"
+            return
         }
 
-        var second = b.toInt()
+        try {
+            val first = a.toInt()
+            val second = b.toInt()
 
+            if (operator == '/' && second == 0) {
+                viewTable.text = "Деление на ноль"
+                return
+            }
 
-        if (operatorIndex != 0){
             val output: Int = when (operator) {
-                '+' -> first + second
-                '-' -> first - second
-                '*' -> first * second
-                '/' -> first / second
-                else -> throw Error("error")
+                '+' -> Math.addExact(first, second)
+                '-' -> Math.subtractExact(first, second)
+                '*' -> Math.multiplyExact(first, second)
+                else -> throw Error("Ошибка")
             }
             viewTable.text = output.toString()
+        } catch (e: ArithmeticException) {
+            viewTable.text = "Переполнение"
+        } catch (e: NumberFormatException) {
+            viewTable.text = "Неверный формат, очистете поле ввода"
+        } catch (e: Exception) {
+            viewTable.text = "Ошибка"
         }
     }
 }
